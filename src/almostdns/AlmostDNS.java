@@ -12,6 +12,8 @@
 
 package almostdns;
 
+import javax.mail.MessagingException;
+
 /**
  * Main
  *
@@ -25,7 +27,24 @@ public class AlmostDNS
      */
     public static void main(String[] args)
     {
-        Tools t = new Tools();
-        System.out.println(t.getAddress());
+        final Tools t = new Tools();
+        
+        Thread emailThread = new Thread(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                try
+                {
+                    t.sendEmail("192.168.0.1");
+                    System.out.println("Email sent.");
+                } catch (MessagingException ex)
+                {
+                    ex.printStackTrace();
+                }
+            }
+        });
+        
+        emailThread.start();
     }
 }
