@@ -12,8 +12,6 @@
 
 package almostdns;
 
-import javax.mail.MessagingException;
-
 /**
  * Main
  *
@@ -27,24 +25,38 @@ public class AlmostDNS
      */
     public static void main(String[] args)
     {
-        final Tools t = new Tools();
         
-        Thread emailThread = new Thread(new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                try
-                {
-                    t.sendEmail("192.168.0.1");
-                    System.out.println("Email sent.");
-                } catch (MessagingException ex)
-                {
-                    ex.printStackTrace();
-                }
-            }
-        });
         
-        emailThread.start();
+//        Thread emailThread = new Thread(new Runnable()
+//        {
+//            @Override
+//            public void run()
+//            {
+//                try
+//                {
+//                    t.sendEmail(t.getAddress());
+//                    System.out.println("Email sent.");
+//                } catch (MessagingException ex)
+//                {
+//                    System.out.println("Email not sent.\n" + ex);
+//                } catch (UnsupportedEncodingException ex)
+//                {
+//                    System.out.println("Email not sent.\n" + ex);
+//                } catch (IOException ex)
+//                {
+//                    System.out.println("IP address cannot be found.\n" + ex);
+//                }
+//            }
+//        });
+        
+//        emailThread.start();
+        
+        /*
+         * on program start send an email with the current ip. then enter
+         * the sleep loop and check if the ip has changed once every 10 minutes.
+         * 
+         * If the ip has changed then send an email, if not then restart the loop
+         * timer.
+         */
     }
 }

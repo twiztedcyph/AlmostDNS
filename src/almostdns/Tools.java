@@ -14,14 +14,12 @@ package almostdns;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Date;
 import java.util.Properties;
-import javax.mail.Authenticator;
 import javax.mail.Message;
 import javax.mail.MessagingException;
-import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.AddressException;
@@ -37,7 +35,7 @@ public class Tools
 
     private final String host = "smtp.gmail.com";
     private final String from = "festival.project.ashleyandian@gmail.com";
-    private final String to = "ianweeks2004@gmail.com";
+    private final String to = "ianweeks05@gmail.com";
 
     // Check exteranl ip address.
     public String getAddress() throws MalformedURLException, IOException
@@ -48,35 +46,32 @@ public class Tools
     }
 
     // Send an email.
-    public void sendEmail(String ipAddress) throws AddressException, MessagingException
+    public void sendEmail(String ipAddress) throws AddressException, MessagingException, UnsupportedEncodingException
     {
-        //Set email sending settings.
-        Properties myProps = new Properties();
-        myProps.put("mail.smtp.host", host);
-        myProps.put("mail.smtp.port", "465");
-        myProps.put("mail.debug", "false");
-        myProps.put("mail.smtp.auth", true);
-        myProps.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
-        myProps.put("mail.smtp.starttls.enable", "true");
+        Properties propsSSL = new Properties();
 
-        //Set username and password
-        Session mySession = Session.getInstance(myProps, new Authenticator()
-        {
-            @Override
-            protected PasswordAuthentication getPasswordAuthentication()
-            {
-                return new PasswordAuthentication("festival.project.ashleyandian@gmail.com", "festivalprojectashleyandian");
-            }
-        });
+        // EVEN IF YOU SKIP THESE TWO PROP IT WOULD WORK
+        propsSSL.put("mail.transport.protocol", "smtps");
+        propsSSL.put("mail.smtps.host", "smtp.gmail.com");
 
-        Message theMsg = new MimeMessage(mySession);
-        theMsg.setFrom(new InternetAddress(from));
-        InternetAddress sendTo = new InternetAddress(to);
-        theMsg.setRecipient(Message.RecipientType.TO, sendTo);
-        theMsg.setSubject("Admin alert.");
-        theMsg.setSentDate(new Date());
-        theMsg.setContent(ipAddress, "text/plain");
-        Transport.send(theMsg);
+        // THIS IS THE MOST IMPORTANT PROP --> "mail.smtps.auth"
+        propsSSL.put("mail.smtps.auth", "true");
 
+        Session sessionSSL = Session.getInstance(propsSSL);
+        sessionSSL.setDebug(true);
+
+        Message messageSSL = new MimeMessage(sessionSSL);
+        messageSSL.setFrom(new InternetAddress(from, "DNS Admin"));
+        messageSSL.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to)); // real recipient
+        messageSSL.setSubject("IP Change");
+        messageSSL.setText(ipAddress);
+
+        Transport transportSSL = sessionSSL.getTransport();
+        // EVEN IF YOU SKIP PORT NUMBER , IT WOULD WORK
+        transportSSL.connect("smtp.gmail.com", 465, "festival.project.ashleyandian@gmail.com", "festivalprojectashleyandian"); // account used
+        transportSSL.sendMessage(messageSSL, messageSSL.getAllRecipients());
+        transportSSL.close();
+
+        System.out.println("Email sent.");
     }
 }
