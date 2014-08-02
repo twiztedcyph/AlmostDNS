@@ -12,6 +12,10 @@
 
 package almostdns;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import javax.mail.MessagingException;
+
 /**
  * Main
  *
@@ -25,38 +29,58 @@ public class AlmostDNS
      */
     public static void main(String[] args)
     {
+        Tools tools = new Tools();
+        String initialIP, newIP;
         
+        try
+        {
+            initialIP = tools.getAddress();
+        } catch (IOException ex)
+        {
+            initialIP = ex.toString();
+        }
         
-//        Thread emailThread = new Thread(new Runnable()
-//        {
-//            @Override
-//            public void run()
-//            {
-//                try
-//                {
-//                    t.sendEmail(t.getAddress());
-//                    System.out.println("Email sent.");
-//                } catch (MessagingException ex)
-//                {
-//                    System.out.println("Email not sent.\n" + ex);
-//                } catch (UnsupportedEncodingException ex)
-//                {
-//                    System.out.println("Email not sent.\n" + ex);
-//                } catch (IOException ex)
-//                {
-//                    System.out.println("IP address cannot be found.\n" + ex);
-//                }
-//            }
-//        });
+        try
+        {
+            tools.sendEmail("Program start: " + initialIP);
+        } catch (MessagingException ex)
+        {
+            System.err.println("Messaging exception: " + ex);
+        } catch (UnsupportedEncodingException ex)
+        {
+            System.err.println("Unsupported encoding exception: " + ex);
+        }
         
-//        emailThread.start();
-        
-        /*
-         * on program start send an email with the current ip. then enter
-         * the sleep loop and check if the ip has changed once every 10 minutes.
-         * 
-         * If the ip has changed then send an email, if not then restart the loop
-         * timer.
-         */
+        // Just run constant for now....
+        while(true)
+        {
+            try
+            {
+                // Test the current address against the initialIP;
+                newIP = tools.getAddress();
+                if (!initialIP.equals(newIP))
+                {
+                    initialIP = newIP;
+                    tools.sendEmail("Program update: " + initialIP);
+                }else
+                {
+                    System.out.println("IP not changed.\nNo email sent.");
+                }
+                
+                Thread.sleep(600000);
+            } catch (InterruptedException ex)
+            {
+                // Not sure if these are really required...
+                System.err.println("Interupt exception: " + ex);
+            } catch (IOException ex)
+            {
+                // Not sure if these are really required...
+                System.err.println("IO exception: " + ex);
+            } catch (MessagingException ex)
+            {
+                // Not sure if these are really required...
+                System.err.println("Messaging exception: " + ex);
+            }
+        }
     }
 }
