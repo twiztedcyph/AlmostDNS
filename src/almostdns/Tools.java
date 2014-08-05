@@ -34,15 +34,18 @@ public class Tools
 {
 
     private final String host = "smtp.gmail.com";
-    private final String from = "festival.project.ashleyandian@gmail.com";
-    private final String to = "ianweeks05@gmail.com";
+    private final String from = "Sender email goes here...";
+    private final String to = "Recipient email goes here...";
 
     // Check exteranl ip address.
     public String getAddress() throws MalformedURLException, IOException
     {
+        // Amazon ip checking service.
         URL whatismyip = new URL("http://checkip.amazonaws.com");
         BufferedReader in = new BufferedReader(new InputStreamReader(whatismyip.openStream()));
-        return in.readLine(); //you get the IP as a String
+        
+        // Get ip as a string.
+        return in.readLine();
     }
 
     // Send an email.
@@ -50,11 +53,9 @@ public class Tools
     {
         Properties propsSSL = new Properties();
 
-        // EVEN IF YOU SKIP THESE TWO PROP IT WOULD WORK
         propsSSL.put("mail.transport.protocol", "smtps");
         propsSSL.put("mail.smtps.host", "smtp.gmail.com");
 
-        // THIS IS THE MOST IMPORTANT PROP --> "mail.smtps.auth"
         propsSSL.put("mail.smtps.auth", "true");
 
         Session sessionSSL = Session.getInstance(propsSSL);
@@ -62,16 +63,13 @@ public class Tools
 
         Message messageSSL = new MimeMessage(sessionSSL);
         messageSSL.setFrom(new InternetAddress(from, "DNS Admin"));
-        messageSSL.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to)); // real recipient
+        messageSSL.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
         messageSSL.setSubject("IP Change");
         messageSSL.setText(ipAddress);
 
         Transport transportSSL = sessionSSL.getTransport();
-        // EVEN IF YOU SKIP PORT NUMBER , IT WOULD WORK
-        transportSSL.connect("smtp.gmail.com", 465, "festival.project.ashleyandian@gmail.com", "festivalprojectashleyandian"); // account used
+        transportSSL.connect("smtp.gmail.com", 465, "Email goes here...", "Password goes here...");
         transportSSL.sendMessage(messageSSL, messageSSL.getAllRecipients());
         transportSSL.close();
-
-        System.out.println("Email sent.");
     }
 }

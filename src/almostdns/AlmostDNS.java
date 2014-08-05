@@ -29,6 +29,7 @@ public class AlmostDNS
      */
     public static void main(String[] args)
     {
+        boolean runProgram = true;
         Tools tools = new Tools();
         String initialIP, newIP;
         
@@ -52,7 +53,7 @@ public class AlmostDNS
         }
         
         // Just run constant for now....
-        while(true)
+        while(runProgram)
         {
             try
             {
@@ -60,25 +61,21 @@ public class AlmostDNS
                 newIP = tools.getAddress();
                 if (!initialIP.equals(newIP))
                 {
+                    //If the ip has changed then send a notification email.
                     initialIP = newIP;
                     tools.sendEmail("Program update: " + initialIP);
-                }else
-                {
-                    System.out.println("IP not changed.\nNo email sent.");
                 }
                 
+                // Ten minute sleep.  This can be changed to suit your needs.
                 Thread.sleep(600000);
             } catch (InterruptedException ex)
             {
-                // Not sure if these are really required...
                 System.err.println("Interupt exception: " + ex);
             } catch (IOException ex)
             {
-                // Not sure if these are really required...
                 System.err.println("IO exception: " + ex);
             } catch (MessagingException ex)
             {
-                // Not sure if these are really required...
                 System.err.println("Messaging exception: " + ex);
             }
         }
